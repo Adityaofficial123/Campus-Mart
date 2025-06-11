@@ -74,182 +74,21 @@
     </button>
   </div>
 </nav>
-<!-- Mobile Tray for 400px-700px -->
-<div class="mobile-tray" id="mobileTray">
-  <button class="tray-close-btn" id="trayCloseBtn">&times;</button>
-  <div class="tray-section" id="trayUserId">Your ID is - <span id="trayUserEmail"></span></div>
+
+
+
+  </header>
+  <!-- Mobile Tray HTML -->
+<div id="mobileTray" class="mobile-tray">
+  <button class="tray-close-btn" id="closeTrayBtn">&times;</button>
+  <div class="tray-section" id="trayUserId">Your ID: <span id="trayUserEmail">Not logged in</span></div>
+  <button class="tray-btn" id="trayCartBtn"><i class="fa fa-shopping-cart"></i> Cart</button>
   <button class="tray-btn" id="trayAdminBtn"><i class="fa fa-user-shield"></i> Admin</button>
-  <button class="tray-btn" id="trayCartBtn"><i class="fa fa-cart-shopping"></i> Cart</button>
   <button class="tray-btn" id="trayLoginBtn"><i class="fa fa-sign-in-alt"></i> Login</button>
   <button class="tray-btn" id="trayLogoutBtn" style="display:none;"><i class="fa fa-sign-out-alt"></i> Logout</button>
 </div>
-<script>
-// Hamburger menu logic for mobile and tray
-(function() {
-  const hamburger = document.getElementById('marketNavbarHamburger');
-  const tray = document.getElementById('mobileTray');
-  const trayClose = document.getElementById('trayCloseBtn');
-  hamburger.addEventListener('click', () => tray.classList.add('open'));
-  trayClose.addEventListener('click', () => tray.classList.remove('open'));
-  // Fill user ID (update this with your auth logic)
-  function updateTrayUserId(email) {
-    document.getElementById('trayUserEmail').textContent = email || 'Not logged in';
-  }
-  // Example: updateTrayUserId(currentUser?.email);
-  // Tray button actions
-  document.getElementById('trayAdminBtn').onclick = () => {
-    const modal = document.getElementById('adminLoginModal');
-    if(modal) modal.style.display = 'block';
-    tray.classList.remove('open');
-  };
-  document.getElementById('trayCartBtn').onclick = () => {
-    window.location.href = 'cart.html';
-    tray.classList.remove('open');
-  };
-  // Login/Logout logic
-  const trayLoginBtn = document.getElementById('trayLoginBtn');
-  const trayLogoutBtn = document.getElementById('trayLogoutBtn');
-  function updateTrayAuthButtons() {
-    const user = window.currentUser || (window.firebaseAuth && window.firebaseAuth.currentUser);
-    if (user) {
-      trayLoginBtn.style.display = 'none';
-      trayLogoutBtn.style.display = 'block';
-      updateTrayUserId(user.email);
-    } else {
-      trayLoginBtn.style.display = 'block';
-      trayLogoutBtn.style.display = 'none';
-      updateTrayUserId();
-    }
-  }
-  trayLoginBtn.onclick = function() {
-    const modal = document.getElementById('loginModal');
-    if(modal) modal.style.display = 'block';
-    tray.classList.remove('open');
-  };
-  trayLogoutBtn.onclick = function() {
-    if(window.signOut) window.signOut();
-    else if(window.firebaseAuth && window.firebaseAuth.signOut) window.firebaseAuth.signOut();
-    tray.classList.remove('open');
-  };
-  // Listen for auth changes (polling, or you can hook into your auth events)
-  setInterval(updateTrayAuthButtons, 700);
-})();
-</script>
-
-  </header>
-  <div id="mobileTray" class="mobile-tray">
-    <button class="tray-close-btn" id="closeTrayBtn">&times;</button>
-    <div class="tray-section" id="trayUserId">Your ID: <span id="trayUserEmail">Not logged in</span></div>
-    <button class="tray-btn" id="trayCartBtn"><i class="fa fa-shopping-cart"></i> Cart</button>
-    <button class="tray-btn" id="trayAdminBtn"><i class="fa fa-user-shield"></i> Admin</button>
-    <button class="tray-btn" id="trayLoginBtn"><i class="fa fa-sign-in-alt"></i> Login</button>
-    <button class="tray-btn" id="trayLogoutBtn" style="display:none;"><i class="fa fa-sign-out-alt"></i> Logout</button>
-  </div>
-  <script>
-
-    // Tray open/close logic
-    function updateTrayUserEmail() {
-      const trayUserEmail = document.getElementById('trayUserEmail');
-      if (window.currentUser && trayUserEmail) {
-        trayUserEmail.textContent = window.currentUser.email;
-      } else if (trayUserEmail) {
-        trayUserEmail.textContent = 'Not logged in';
-      }
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-      const tray = document.getElementById('mobileTray');
-      const hamburger = document.querySelector('.market-navbar__hamburger');
-      const closeTrayBtn = document.getElementById('closeTrayBtn');
-      // Open tray
-      if (hamburger) {
-        hamburger.addEventListener('click', function() {
-          tray.classList.add('open');
-        });
-      }
-      // Close tray (fix: use event delegation for dynamic DOM)
-      document.body.addEventListener('click', function(e) {
-        if (e.target && (e.target.id === 'closeTrayBtn' || e.target.classList.contains('tray-close-btn'))) {
-          tray.classList.remove('open');
-        }
-      });
-      // Cart button
-      document.getElementById('trayCartBtn').onclick = function() {
-        window.location.href = 'cart.html';
-      };
-      // Admin button
-      document.getElementById('trayAdminBtn').onclick = function() {
-        document.getElementById('adminLoginModal').style.display = 'block';
-        tray.classList.remove('open');
-      };
-      // Login/Logout buttons
-      const trayLoginBtn = document.getElementById('trayLoginBtn');
-      const trayLogoutBtn = document.getElementById('trayLogoutBtn');
-      function updateTrayAuthButtons() {
-        if (window.currentUser) {
-          trayLoginBtn.style.display = 'none';
-          trayLogoutBtn.style.display = 'block';
-        } else {
-          trayLoginBtn.style.display = 'block';
-          trayLogoutBtn.style.display = 'none';
-        }
-      }
-      trayLoginBtn.onclick = function() {
-        document.getElementById('loginModal').style.display = 'block';
-        tray.classList.remove('open');
-      };
-      trayLogoutBtn.onclick = function() {
-        if (window.signOut) window.signOut();
-        tray.classList.remove('open');
-      };
-      // Listen for auth changes (from main script)
-      setInterval(function() {
-        updateTrayUserEmail();
-        updateTrayAuthButtons();
-      }, 500);
-    });
-  </script>
-  <style>
-    .mobile-tray {
-      position: fixed;
-      top: 0;
-      left: -260px;
-      width: 240px;
-      min-height: 120px;
-      max-height: 90vh;
-      background: #232323;
-      color: #fff;
-      z-index: 1202;
-      box-shadow: 2px 0 16px rgba(0,0,0,0.18);
-      padding: 32px 18px 18px 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      transition: left 0.3s cubic-bezier(.4,0,.2,1);
-      border-radius: 0 16px 16px 0;
-      overflow-y: auto;
-    }
-    .mobile-tray.open { left: 0; }
-    .tray-close-btn {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      font-size: 1.5rem;
-      color: #fff;
-      background: none;
-      border: none;
-      cursor: pointer;
-      z-index: 2;
-    }
-    .tray-section { margin-bottom: 10px; font-size: 1.05rem; font-weight: 500; color: #fff; word-break: break-all; }
-    .tray-btn {
-      display: flex; align-items: center; gap: 10px;
-      background: #181818; color: #ffb74d; border: none; border-radius: 8px;
-      padding: 10px 18px; font-size: 1rem; font-weight: 600; margin-bottom: 6px; cursor: pointer;
-      transition: background 0.2s, color 0.2s;
-    }
-    .tray-btn:hover { background: #ffb74d; color: #181818; }
-  </style>
+  
+  
   
 
   <!-- Hero Section (Modern, Responsive, Only Once) -->
@@ -583,6 +422,78 @@
       }
     });
 
+    // tray
+    // Mobile Tray JavaScript
+document.addEventListener('DOMContentLoaded', function () {
+  const tray = document.getElementById('mobileTray');
+  const closeTrayBtn = document.getElementById('closeTrayBtn');
+  const trayCartBtn = document.getElementById('trayCartBtn');
+  const trayAdminBtn = document.getElementById('trayAdminBtn');
+  const trayLoginBtn = document.getElementById('trayLoginBtn');
+  const trayLogoutBtn = document.getElementById('trayLogoutBtn');
+
+  // Open tray
+  document.querySelector('.market-navbar__hamburger').addEventListener('click', function () {
+    tray.classList.add('open');
+  });
+
+  // Close tray
+  closeTrayBtn.addEventListener('click', function () {
+    tray.classList.remove('open');
+  });
+
+  // Cart button
+  trayCartBtn.onclick = function () {
+    window.location.href = 'cart.html';
+  };
+
+  // Admin button
+  trayAdminBtn.onclick = function () {
+    document.getElementById('adminLoginModal').style.display = 'block';
+    tray.classList.remove('open');
+  };
+
+  // Login/Logout buttons
+  trayLoginBtn.onclick = function () {
+    document.getElementById('loginModal').style.display = 'block';
+    tray.classList.remove('open');
+  };
+
+  trayLogoutBtn.onclick = function () {
+    if (window.signOut) window.signOut();
+    tray.classList.remove('open');
+  };
+
+  // Update tray user email
+function updateTrayUserEmail() {
+  const trayUserEmail = document.getElementById('trayUserEmail');
+  const user = auth.currentUser; // Use Firebase's currentUser directly
+  if (user && trayUserEmail) {
+    trayUserEmail.textContent = user.email;
+  } else if (trayUserEmail) {
+    trayUserEmail.textContent = 'Not logged in';
+  }
+}
+
+  // Update tray buttons based on authentication state
+  function updateTrayAuthButtons() {
+  const user = auth.currentUser; // Use Firebase's currentUser directly
+  if (user) {
+    trayLoginBtn.style.display = 'none';
+    trayLogoutBtn.style.display = 'block';
+  } else {
+    trayLoginBtn.style.display = 'block';
+    trayLogoutBtn.style.display = 'none';
+  }
+}
+
+  // Listen for auth changes
+onAuthStateChanged(auth, user => {
+  updateTrayUserEmail(user);
+  updateTrayAuthButtons(user);
+});
+});
+
     // 4. Login / Logout UI
     document.getElementById('navbarLoginBtn').onclick = () =>
       document.getElementById('loginModal').style.display = 'block';
@@ -636,19 +547,24 @@
         .catch(err => alert("❌ Registration failed: " + err.message));
     };
 
-    document.getElementById('loginBtn').onclick = () => {
-      const e = document.getElementById('authEmail').value,
-        p = document.getElementById('authPassword').value;
-      signInWithEmailAndPassword(auth, e, p)
-        .then(uc => {
-          if (uc.user.emailVerified) {
-            alert("✅ Logged in!"); document.getElementById('loginModal').style.display = 'none';
-          } else {
-            alert("❌ Please verify email."); signOut(auth);
-          }
-        })
-        .catch(err => alert("❌ Login failed: " + err.message));
-    };
+document.getElementById('loginBtn').onclick = () => {
+  const email = document.getElementById('authEmail').value;
+  const password = document.getElementById('authPassword').value;
+  signInWithEmailAndPassword(auth, email, password)
+    .then(userCredential => {
+      const user = userCredential.user;
+      if (user.emailVerified) {
+        alert("✅ Logged in!");
+        document.getElementById('loginModal').style.display = 'none';
+        updateTrayUserEmail(user);
+        updateTrayAuthButtons(user);
+      } else {
+        alert("❌ Please verify your email.");
+        signOut(auth);
+      }
+    })
+    .catch(err => alert("❌ Login failed: " + err.message));
+};
 
     document.getElementById('googleLoginBtn').onclick = () => {
       const prov = new GoogleAuthProvider();
@@ -758,7 +674,7 @@
     </div>
   </div>`;
 document.body.insertAdjacentHTML('beforeend', modalHtml);
-        document.body.insertAdjacentHTML('beforeend', modalHtml);
+      
 
         // Add listeners only after modal is added:
         const closeBtn = document.getElementById('closePaymentModal');
@@ -795,7 +711,7 @@ document.body.insertAdjacentHTML('beforeend', modalHtml);
 
               if (!data.secure_url) throw new Error('Cloudinary upload failed');
 
-              // Store seller payment confirmation in seller_payments branch
+             // Store seller payment confirmation in seller_payments branch
               const paymentData = {
                 product_key: productKey,
                 user_email: currentUser.email,
@@ -809,6 +725,7 @@ document.body.insertAdjacentHTML('beforeend', modalHtml);
 
 
               await push(ref(db, 'seller_payments'), paymentData);
+
 
               // Send to Google Sheet
               fetch('https://script.google.com/macros/s/AKfycby2Ntc0F-RYlHPS06hm0pzknoLvv_x5P4amj9HbNfeTyhs6MgVaheJcj6BpRigT-8uCHA/exec', {
@@ -983,24 +900,26 @@ document.body.insertAdjacentHTML('beforeend', modalHtml);
       <input type="email" id="authEmail" placeholder="Enter your email">
       <input type="password" id="authPassword" placeholder="Enter your password">
 
-      <!-- Google Login -->
-      <button id="googleLoginBtn" class="google-btn">
-        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo" style="width: 20px; height: 20px; margin-right: 8px;" />
-        <span style="vertical-align: middle;">Sign in with Google</span>
+     <!-- Google Login -->
+      <button id="googleLoginBtn" class="google-btn" style="display:flex;align-items:center;gap:10px;justify-content:center;width:100%;padding:10px 0;margin:18px 0 10px 0;background:#fff;border:1px solid #ccc;border-radius:6px;cursor:pointer;transition:box-shadow 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+        <svg class="google-icon" width="24" height="24" viewBox="0 0 48 48" style="width:24px;height:24px;display:inline-block;vertical-align:middle;flex-shrink:0;">
+          <g>
+            <path fill="#4285F4" d="M43.6 20.5h-1.9V20H24v8h11.3c-1.5 4-5.2 7-9.3 7-5.5 0-10-4.5-10-10s4.5-10 10-10c2.4 0 4.6 0.9 6.3 2.3l6.1-6.1C34.5 8.1 29.5 6 24 6 13.5 6 5 14.5 5 25s8.5 19 19 19c10.5 0 19-8.5 19-19 0-1.3-0.1-2.7-0.4-4z"/>
+            <path fill="#34A853" d="M24 44c5.1 0 9.4-1.7 12.5-4.7l-6.1-5.1c-1.7 1.1-3.8 1.8-6.4 1.8-4.1 0-7.8-2.7-9.1-6.4H8.2v5.3C11.3 40.3 17.2 44 24 44z"/>
+            <path fill="#FBBC05" d="M14.9 29.6c-0.4-1.1-0.7-2.3-0.7-3.6s0.3-2.5 0.7-3.6v-5.3H8.2C7.1 19.7 6 22.2 6 25s1.1 5.3 2.2 7.4l6.7-5.8z"/>
+            <path fill="#EA4335" d="M24 14.5c2.6 0 4.9 0.9 6.7 2.7l5-5C32.9 9.1 28.7 7 24 7c-6.8 0-12.7 3.7-15.8 9.3l6.7 5.3c1.3-3.7 5-6.4 9.1-6.4z"/>
+            <path fill="none" d="M0 0h48v48H0z"/>
+          </g>
+        </svg>
+        <span style="font-size:1.05rem;color:#222;font-weight:500;display:inline-block;vertical-align:middle;">Sign in with Google</span>
       </button>
-
       <!-- Buttons -->
       <div class="btn-group">
         <button id="loginBtn">Login</button>
-        <button id="registerBtn">Register</button>
+        <button id="registerBtn">Sign Up</button>
       </div>
     </div>
   </div>
-
-
-
-
-
 
   <div id="adminLoginModal" class="modal">
     <div class="modal-content">
@@ -1012,8 +931,6 @@ document.body.insertAdjacentHTML('beforeend', modalHtml);
 
     </div>
   </div>
-
-
   <!-- Payment Modal -->
    
   <!-- <div id="paymentModal" class="modal">
@@ -1029,7 +946,6 @@ document.body.insertAdjacentHTML('beforeend', modalHtml);
   </div> -->
 
   
-
 </body>
 
 </html>
